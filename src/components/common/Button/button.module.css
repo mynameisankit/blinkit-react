@@ -1,0 +1,45 @@
+.btn {
+    background-color: transparent;
+    border: 0;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 100ms ease-in-out;
+    border-radius: 0.5rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-contained {
+    font-weight: bold;
+}
+
+.btn-contained:hover {
+    background-color: var(--primary-color-light);
+    color: white;
+}
+
+.btn-outlined {
+    font-weight: bold;
+    border: 0.2rem solid var(--primary-color);
+    background-color: var(--primary-color-translucent);
+    color: var(--primary-color);
+}
+
+.btn-outlined:hover {
+    background-color: var(--primary-color-light);
+    color: white;
+}
+
+.btn__icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    transition: background-color 100ms ease-in-out;
+}
+
+.btn__text {
+    color: inherit;
+}
