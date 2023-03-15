@@ -1,0 +1,15 @@
+:root {
+    --primary-color: rgb(12, 131, 31);
+    --primary-color-light: rgb(19, 195, 49);
+    --primary-color-translucent: rgba(12, 131, 31, 0.2);
+}
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}

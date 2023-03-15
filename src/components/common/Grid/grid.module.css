@@ -1,0 +1,8 @@
+.grid {
+    display: grid;
+    grid-auto-rows: minmax(5rem, auto);
+}
+
+.grid-col-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
