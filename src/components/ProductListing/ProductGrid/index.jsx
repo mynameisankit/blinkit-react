@@ -1,38 +1,42 @@
 import { Component } from "react";
+import { connect } from "react-redux";
+import selectProducts from "../../../redux/selectors/selectProducts";
+import selectSortOrder from "../../../redux/selectors/selectSortOrder";
+import selectCart from "../../../redux/selectors/selectCart";
 import PropTypes from "prop-types";
 // Custom Components
 import Header from "./Header";
 import ProductCard from "./ProductCard";
 import Grid from "../../common/Grid";
 // Enums
-import { SORTING_ORDER } from "../../../data/enums";
+import sortOrderEnum from "../../../data/sortOrderEnum";
 // Utils
 import joinClasses from "../../../utils/joinClasses";
 
 class ProductListing extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            order: SORTING_ORDER.LOWEST_PRICE,
-        };
+    sortByHighestPrice(price1, price2) {
+        return price2 - price1;
     }
 
-    changeOrder = (order) => {
-        this.setState({ order });
-    };
+    sortByLowestPrice(price1, price2) {
+        return price1 - price2;
+    }
 
-    sortByHighestPrice(price1, price2, increasing = true) {
-        if (increasing) return price1 - price2;
-        else return price2 - price1;
+    getProductCount(productId) {
+        const { cart } = this.props;
+        return cart[productId] ?? 0;
     }
 
     render() {
-        const { order } = this.state;
-        const { products } = this.props;
+        const { products, sortOrder } = this.props;
+        const sortFn =
+            sortOrder === sortOrderEnum.LOWEST_PRICE
+                ? this.sortByLowestPrice
+                : this.sortByHighestPrice;
 
         return (
             <main className="flex-grow-1">
-                <Header order={order} changeOrder={this.changeOrder} />
+                <Header />
 
                 <Grid
                     cols={3}
@@ -43,18 +47,13 @@ class ProductListing extends Component {
                         "border-grey",
                     ])}
                 >
-                    {products
-                        .sort((a, b) =>
-                            this.sortByHighestPrice(
-                                a.offeredPrice,
-                                b.offeredPrice,
-                                order === SORTING_ORDER.LOWEST_PRICE
-                            )
-                        )
-                        .map((product) => (
+                    {Object.values(products)
+                        .sort((a, b) => sortFn(a.offeredPrice, b.offeredPrice))
+                        .map(product => (
                             <ProductCard
                                 key={`${product.productId}`}
-                                {...product}
+                                productDetails={product}
+                                productCount={this.getProductCount(product.productId)}
                             />
                         ))}
                 </Grid>
@@ -64,7 +63,21 @@ class ProductListing extends Component {
 }
 
 ProductListing.propTypes = {
-    products: PropTypes.array.isRequired,
+    products: PropTypes.object.isRequired,
+    sortOrder: PropTypes.string.isRequired,
+    cart: PropTypes.object.isRequired
 };
 
-export default ProductListing;
+const mapStateToProps = (state) => {
+    const products = selectProducts(state);
+    const sortOrder = selectSortOrder(state);
+    const cart = selectCart(state);
+
+    return {
+        products,
+        sortOrder,
+        cart
+    };
+};
+
+export default connect(mapStateToProps, null)(ProductListing);

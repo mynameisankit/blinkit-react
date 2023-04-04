@@ -1,48 +1,40 @@
+import { connect } from "react-redux";
 import { Component } from "react";
+import addItemToCart from "../../../redux/actions/addItemToCart";
+import removeItemFromCart from "../../../redux/actions/removeItemFromCart";
 import PropTypes from "prop-types";
 import Flex from "../../common/Flex";
 import joinClasses from "../../../utils/joinClasses";
-import { CartContext } from "../../CartContext";
 import ProductActions from "./ProductActions";
 import Chip from "../../common/Chip";
 
 class ProductCard extends Component {
-    static contextType = CartContext;
+    addItem = () => {
+        const { productDetails, addItemToCart } = this.props;
+        const { productId } = productDetails;
 
-    getCount = () => {
-        const { productId } = this.props;
-        const count = this.context?.data?.[productId]?.count;
-
-        return count ?? 0;
+        addItemToCart(productId);
     };
 
-    handleAddition = (shouldIncrement = false) => {
-        const item = this.props;
-        const { productId } = item;
-        const {
-            handlers: { addItem, removeItem },
-        } = this.context;
+    removeItem = () => {
+        const { productDetails, removeItemFromCart } = this.props;
+        const { productId } = productDetails;
 
-        const count = this.getCount();
-        if (shouldIncrement) {
-            addItem(item);
-        } else if (count) {
-            removeItem(productId);
-        }
+        removeItemFromCart(productId);
     };
 
     render() {
+        const { productDetails, productCount } = this.props;
+
         const {
-            name,
             image,
-            actualPrice,
+            name,
             offer,
             offeredPrice,
             quantities,
             sourcedAt,
-        } = this.props;
-
-        const count = this.getCount();
+            actualPrice,
+        } = productDetails;
 
         return (
             <Flex
@@ -92,15 +84,9 @@ class ProductCard extends Component {
 
                 <h3 className="flex-align-self-start">{name}</h3>
 
-                <Flex 
-                    gap={1}
-                    wrap='wrap'
-                    className='flex-align-self-start'
-                >
+                <Flex gap={1} wrap="wrap" className="flex-align-self-start">
                     {quantities?.map((quantity, idx) => (
-                        <Chip key={idx}>
-                            {quantity}
-                        </Chip>
+                        <Chip key={idx}>{quantity}</Chip>
                     ))}
                 </Flex>
 
@@ -117,8 +103,9 @@ class ProductCard extends Component {
                     </Flex>
 
                     <ProductActions
-                        count={count}
-                        handleClick={this.handleAddition}
+                        count={productCount}
+                        addItem={this.addItem}
+                        removeItem={this.removeItem}
                     />
                 </Flex>
             </Flex>
@@ -127,17 +114,28 @@ class ProductCard extends Component {
 }
 
 ProductCard.propTypes = {
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    actualPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-    offer: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    offeredPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-    productId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-        .isRequired,
-    quantities: PropTypes.array.isRequired,
-    sourcedAt: PropTypes.string.isRequired,
+    productDetails: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        image: PropTypes.string.isRequired,
+        actualPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+            .isRequired,
+        offer: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+            .isRequired,
+        offeredPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+            .isRequired,
+        productId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+            .isRequired,
+        quantities: PropTypes.array.isRequired,
+        sourcedAt: PropTypes.string.isRequired,
+    }).isRequired,
+    productCount: PropTypes.number.isRequired,
+    addItemToCart: PropTypes.func.isRequired,
+    removeItemFromCart: PropTypes.func.isRequired,
 };
 
-export default ProductCard;
+const mapDispatchToProps = {
+    addItemToCart,
+    removeItemFromCart
+};
+
+export default connect(null, mapDispatchToProps)(ProductCard);

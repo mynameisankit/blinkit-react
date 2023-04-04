@@ -2,7 +2,11 @@ import PropTypes from "prop-types";
 import Button from "../../common/Button";
 import joinClasses from "../../../utils/joinClasses";
 
-function ButtonWithProductQuantity({ handleClick, count }) {
+function ButtonWithProductQuantity({ 
+    addItem,
+    removeItem, 
+    count 
+}) {
     const buttonContentClassName = joinClasses([
         "flex-grow-1",
         "flex-basis-0",
@@ -20,7 +24,7 @@ function ButtonWithProductQuantity({ handleClick, count }) {
         >
             <span
                 className={buttonContentClassName}
-                onClick={() => handleClick(false)}
+                onClick={() => removeItem()}
             >
                 -
             </span>
@@ -29,7 +33,7 @@ function ButtonWithProductQuantity({ handleClick, count }) {
 
             <span
                 className={buttonContentClassName}
-                onClick={() => handleClick(true)}
+                onClick={() => addItem()}
             >
                 +
             </span>
@@ -39,21 +43,27 @@ function ButtonWithProductQuantity({ handleClick, count }) {
 
 ButtonWithProductQuantity.propTypes = {
     count: PropTypes.number.isRequired,
-    handleClick: PropTypes.func.isRequired
+    addItem: PropTypes.func.isRequired,
+    removeItem: PropTypes.func.isRequired
 };
 
-function ProductActions({ count, handleClick }) {
+function ProductActions({
+    count,
+    addItem, 
+    removeItem 
+}) {
     if (count) {
         return (
             <ButtonWithProductQuantity
-                handleClick={handleClick}
+                addItem={addItem}
+                removeItem={removeItem}
                 count={count}
             />
         );
     }
 
     return (
-        <Button type="outlined" onClick={() => handleClick(true)}>
+        <Button type="outlined" onClick={() => addItem()}>
             Add
         </Button>
     );
@@ -61,7 +71,8 @@ function ProductActions({ count, handleClick }) {
 
 ProductActions.propTypes = {
     count: PropTypes.number.isRequired,
-    handleClick: PropTypes.func.isRequired
+    addItem: PropTypes.func.isRequired,
+    removeItem: PropTypes.func.isRequired
 };
 
 export default ProductActions;

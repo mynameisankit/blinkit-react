@@ -1,65 +1,59 @@
-import { Component, Fragment } from "react";
+import { Fragment } from "react";
+import { connect } from "react-redux";
+import selectCartMetaData from "../../redux/selectors/selectCartMetaData";
+import propTypes from 'prop-types';
 import Button from "../common/Button";
 import Flex from "../common/Flex";
-import { CartContext } from "../CartContext";
 // Cart Icon
 import CartIcon from "../../assets/shopping-cart.png";
 
-class NavbarButtons extends Component {
-    static contextType = CartContext;
+function NavbarButtons({ 
+    totalCost, 
+    numberOfItems 
+}) {
+    // console.log(totalCost, numberOfItems);
 
-    getTotalCost = () => {
-        const { data: cart } = this.context;
+    const multiple = numberOfItems > 1;
 
-        return Object.values(cart).reduce((acc, item) => {
-            return acc + parseInt(item.offeredPrice) * item.count;
-        }, 0);
-    };
-
-    getNumberOfItems = () => {
-        const { data: cart } = this.context;
-
-        return Object.values(cart).reduce((acc, item) => {
-            return acc + item.count;
-        }, 0);
-    };
-
-    render() {
-        const totalCost = this.getTotalCost();
-        const numberOfItems = this.getNumberOfItems();
-        const multiple = numberOfItems > 1;
-
-        return (
-            <Flex
-                grow={1}
-                gap={1}
-                direction="row-reverse"
-                alignItems="center"
-                className="padding-x-1"
+    return (
+        <Flex
+            grow={1}
+            gap={1}
+            direction="row-reverse"
+            alignItems="center"
+            className="padding-x-1"
+        >
+            <Button
+                href="/cart"
+                type="contained"
+                color="primary"
+                icon={CartIcon}
+                alt=""
             >
-                <Button
-                    href="/cart"
-                    type="contained"
-                    color="primary"
-                    icon={CartIcon}
-                    alt=""
-                >
-                    {totalCost ? (
-                        <Fragment>
-                            <p>
-                                {numberOfItems} item{multiple ? "s" : ""}
-                            </p>
-                            <p>Rs {totalCost}</p>
-                        </Fragment>
-                    ) : (
-                        "My Cart"
-                    )}
-                </Button>
+                {totalCost ? (
+                    <Fragment>
+                        <p>
+                            {numberOfItems} item{multiple ? "s" : ""}
+                        </p>
+                        <p>Rs {totalCost}</p>
+                    </Fragment>
+                ) : (
+                    "My Cart"
+                )}
+            </Button>
 
-                <Button href="/login">Login</Button>
-            </Flex>
-        );
-    }
+            <Button href="/login">Login</Button>
+        </Flex>
+    );
 }
 
-export default NavbarButtons;
+NavbarButtons.propTypes = {
+    totalCost: propTypes.number.isRequired,
+    numberOfItems: propTypes.number.isRequired
+};
+
+const mapStateToProps = state => ({
+    ...selectCartMetaData(state)
+});
+
+export default connect(mapStateToProps, null)(NavbarButtons);

@@ -1,10 +1,16 @@
+import { connect } from "react-redux";
+import selectSortOrder from '../../../redux/selectors/selectSortOrder';
+import changeSortOrder from '../../../redux/actions/changeSortOrder';
 import PropTypes from "prop-types";
 import Flex from "../../common/Flex";
 import joinClasses from "../../../utils/joinClasses";
 // Enums
-import { SORTING_ORDER } from "../../../data/enums";
+import sortOrderEnum from "../../../data/sortOrderEnum";
 
-function Header({ order: currentOrder, changeOrder }) {
+function Header({
+    currentOrder,
+    changeSortOrder
+}) {
     return (
         <Flex
             component="header"
@@ -26,7 +32,7 @@ function Header({ order: currentOrder, changeOrder }) {
 
                 <select
                     value={currentOrder}
-                    onChange={event => changeOrder(event.target.value)}
+                    onChange={event => changeSortOrder(event.target.value)}
                     className={joinClasses([
                         "border-1",
                         "border-grey",
@@ -34,7 +40,7 @@ function Header({ order: currentOrder, changeOrder }) {
                         "color-primary",
                     ])}
                 >
-                    {Object.values(SORTING_ORDER).map((order) => (
+                    {Object.values(sortOrderEnum).map((order) => (
                         <option 
                             key={order} 
                             value={order}
@@ -49,8 +55,16 @@ function Header({ order: currentOrder, changeOrder }) {
 }
 
 Header.propTypes = {
-    order: PropTypes.string.isRequired,
-    changeOrder: PropTypes.func.isRequired
+    currentOrder: PropTypes.string.isRequired,
+    changeSortOrder: PropTypes.func.isRequired
 };
 
-export default Header;
+const mapStateToProps = state => ({
+    currentOrder: selectSortOrder(state)
+});
+
+const mapDispatchToProps = {
+    changeSortOrder
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

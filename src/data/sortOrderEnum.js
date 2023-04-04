@@ -1,8 +1,6 @@
-const SORTING_ORDER = Object.freeze({
+const sortOrderEnum = Object.freeze({
     LOWEST_PRICE: 'Lowest Price',
     HIGHEST_PRICE: 'Highest Price'
 });
 
-export {
-    SORTING_ORDER
-};
+export default sortOrderEnum;
